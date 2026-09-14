@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -127,4 +127,109 @@
   html {
     @apply font-sans;
   }
+}
+/* --- Wordle ------------------------------------------------------------ */
+
+:root {
+  --tile-correct: oklch(0.64 0.15 158);
+  --tile-present: oklch(0.78 0.155 78);
+  --tile-absent: oklch(0.56 0.012 260);
+  --tile-border: oklch(0.9 0.005 260);
+  --tile-border-filled: oklch(0.62 0.01 260);
+  --key-bg: oklch(0.92 0.006 260);
+  --key-bg-hover: oklch(0.88 0.008 260);
+  --glow-a: oklch(0.85 0.1 158 / 45%);
+  --glow-b: oklch(0.88 0.1 78 / 40%);
+}
+
+.dark {
+  --tile-correct: oklch(0.6 0.13 158);
+  --tile-present: oklch(0.72 0.14 78);
+  --tile-absent: oklch(0.29 0.008 260);
+  --tile-border: oklch(1 0 0 / 12%);
+  --tile-border-filled: oklch(1 0 0 / 35%);
+  --key-bg: oklch(0.48 0.01 260);
+  --key-bg-hover: oklch(0.54 0.012 260);
+  --glow-a: oklch(0.45 0.1 158 / 35%);
+  --glow-b: oklch(0.45 0.1 78 / 25%);
+}
+
+.high-contrast {
+  --tile-correct: oklch(0.7 0.19 45);
+  --tile-present: oklch(0.66 0.13 235);
+}
+
+.app-background {
+  background:
+    radial-gradient(60rem 40rem at 10% -10%, var(--glow-a), transparent 60%),
+    radial-gradient(50rem 35rem at 110% 110%, var(--glow-b), transparent 60%),
+    var(--background);
+}
+
+.tile {
+  --tile-bg: transparent;
+  --tile-fg: var(--foreground);
+  --tile-bd: var(--tile-border);
+  background: var(--tile-bg);
+  color: var(--tile-fg);
+  border-color: var(--tile-bd);
+}
+.tile[data-filled="true"] {
+  --tile-bd: var(--tile-border-filled);
+}
+.tile[data-state="correct"],
+.tile[data-state="present"],
+.tile[data-state="absent"] {
+  --tile-fg: white;
+}
+.tile[data-state="correct"] { --tile-bg: var(--tile-correct); --tile-bd: var(--tile-correct); }
+.tile[data-state="present"] { --tile-bg: var(--tile-present); --tile-bd: var(--tile-present); }
+.tile[data-state="absent"] { --tile-bg: var(--tile-absent); --tile-bd: var(--tile-absent); }
+
+.tile[data-animation="pop"] { animation: tile-pop 120ms ease-out; }
+.tile[data-animation="reveal"] { animation: tile-reveal 520ms ease-in-out backwards; }
+.tile[data-animation="bounce"] { animation: tile-bounce 900ms ease-in-out both; }
+.row[data-shake="true"] { animation: row-shake 560ms ease-in-out; }
+
+@keyframes tile-pop {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes tile-reveal {
+  0% {
+    transform: rotateX(0deg);
+    background: transparent;
+    border-color: var(--tile-border-filled);
+    color: var(--foreground);
+  }
+  49.9% {
+    transform: rotateX(90deg);
+    background: transparent;
+    border-color: var(--tile-border-filled);
+    color: var(--foreground);
+  }
+  50% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+}
+
+@keyframes tile-bounce {
+  0%, 20% { transform: translateY(0); }
+  40% { transform: translateY(-28%); }
+  50% { transform: translateY(4%); }
+  60% { transform: translateY(-12%); }
+  80% { transform: translateY(2%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes row-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .row { animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }
